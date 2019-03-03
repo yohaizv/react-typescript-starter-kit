@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test:  render correctly 1`] = `
+.emotion-0 {
+  background-color: red;
+}
+
+<div
+  className="emotion-0 emotion-1"
+>
+  123
+</div>
+`;
