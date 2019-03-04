@@ -1,4 +1,4 @@
-import { ADD_MESSAGE } from "../actions";
+import { ADD_MESSAGE, FOUND_BAD_WORD } from "../actions";
 const forbiddenWords = ["fuck", "bitch"];
 
 export const forbiddenWordsMiddleware = ({ dispatch }: any) => (
@@ -8,7 +8,7 @@ export const forbiddenWordsMiddleware = ({ dispatch }: any) => (
     const foundWord = forbiddenWords.filter(word =>
       action.payload.includes(word)
     );
-    if (foundWord.length) return dispatch({ type: "FOUND_BAD_WORD" });
+    if (foundWord.length) return dispatch({ type: FOUND_BAD_WORD });
   }
   return next(action);
 };
