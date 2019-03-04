@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import MessageForm from "./components/MessageForm";
+import ClientMessages from "./components/Post";
 import { addMessage } from "../../actions";
 interface MessagesBoardProps {
   messages: Array<{ id: number; title: string }>;
@@ -25,6 +26,7 @@ const MessagesBoard = ({
         </li>
       ))}
     </ul>
+    <ClientMessages />
   </div>
 );
 
