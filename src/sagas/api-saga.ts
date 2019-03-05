@@ -1,21 +1,29 @@
 import { takeEvery, call, put } from "redux-saga/effects";
-import { DATA_REQUESTED, DATA_LOADED, API_ERROR } from "../actions";
+import { SEND_ASYNC_MESSAGE, ChatActionTypes } from "../store/chat/types";
+import { sendMessage } from "../store/chat/actions";
 
 export default function* watcherSage() {
-  yield takeEvery(DATA_REQUESTED, workerSaga);
+  yield takeEvery(SEND_ASYNC_MESSAGE, workerSaga);
 }
 
-function* workerSaga() {
+function* workerSaga(action: ChatActionTypes) {
   try {
-    const payload = yield call(getData);
-    yield put({ type: DATA_LOADED, payload });
+    if (action.type === SEND_ASYNC_MESSAGE) {
+      const user = yield exampleAPI();
+      console.log("In saga: action=", action);
+      yield put(
+        sendMessage({
+          message: action.payload,
+          timestamp: new Date().getTime(),
+          user
+        })
+      );
+    }
   } catch (e) {
-    yield put({ type: API_ERROR, payload: e });
+    
   }
 }
 
-function getData() {
-  return fetch("https://jsonplaceholder.typicode.com/posts").then(response =>
-    response.json()
-  );
+function exampleAPI() {
+  return Promise.resolve("Async Chat Bot");
 }

@@ -1,21 +1,29 @@
-import { createStore, applyMiddleware, compose } from "redux";
-import rootReducer from "../reducers";
+import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import { forbiddenWordsMiddleware } from "../middleware";
 import createSagaMiddleware from "redux-saga";
 import apiSaga from "../sagas/api-saga";
+import { composeWithDevTools } from "redux-devtools-extension";
 
-const initialSagaMiddleware = createSagaMiddleware();
+import { chatReducer } from "./chat/reducers";
+import { systemReducer } from "./system/reducers";
 
-const storeEnhancers =
-  (<any>window).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const rootReducer = combineReducers({
+  system: systemReducer,
+  chat: chatReducer
+});
 
-const store = createStore(
-  rootReducer,
-  storeEnhancers(
-    applyMiddleware(forbiddenWordsMiddleware, initialSagaMiddleware)
-  )
-);
+export type AppState = ReturnType<typeof rootReducer>;
 
-initialSagaMiddleware.run(apiSaga);
+export default function configurationStore() {
+  const initialSagaMiddleware = createSagaMiddleware();
+  const middlewares = [forbiddenWordsMiddleware, initialSagaMiddleware];
+  const middleWareEnhancer = applyMiddleware(...middlewares);
 
-export default store;
+  const store = createStore(
+    rootReducer,
+    composeWithDevTools(middleWareEnhancer)
+  );
+
+  initialSagaMiddleware.run(apiSaga);
+  return store;
+}

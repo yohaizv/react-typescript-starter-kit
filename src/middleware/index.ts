@@ -1,14 +1,16 @@
-import { ADD_MESSAGE, FOUND_BAD_WORD } from "../actions";
+import { SEND_MESSAGE, ChatActionTypes } from "../store/chat/types";
+import { forbiddenWord } from "../store/chat/actions";
+
 const forbiddenWords = ["fuck", "bitch"];
 
 export const forbiddenWordsMiddleware = ({ dispatch }: any) => (
   next: Function
-) => (action: any) => {
-  if (action.type === ADD_MESSAGE) {
+) => (action: ChatActionTypes) => {
+  if (action.type === SEND_MESSAGE) {
     const foundWord = forbiddenWords.filter(word =>
-      action.payload.includes(word)
+      action.payload.message.includes(word)
     );
-    if (foundWord.length) return dispatch({ type: FOUND_BAD_WORD });
+    if (foundWord.length) return dispatch(forbiddenWord());
   }
   return next(action);
 };
