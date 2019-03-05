@@ -6,24 +6,23 @@ export default function* watchSendAsyncMessage() {
   yield takeEvery(SEND_ASYNC_MESSAGE, sendAsyncMessage);
 }
 
-function* sendAsyncMessage(action: ChatActionTypes) {
+export function* sendAsyncMessage(action: ChatActionTypes) {
   try {
     if (action.type === SEND_ASYNC_MESSAGE) {
-      const user = yield exampleAPI();
+      const user = yield call(exampleAPI);
+      const timestamp = yield new Date().getTime();
       console.log("In saga: action=", action);
       yield put(
         sendMessage({
           message: action.payload,
-          timestamp: new Date().getTime(),
+          timestamp,
           user
         })
       );
     }
-  } catch (e) {
-    
-  }
+  } catch (e) {}
 }
 
-function exampleAPI() {
+export function exampleAPI() {
   return Promise.resolve("Async Chat Bot");
 }
