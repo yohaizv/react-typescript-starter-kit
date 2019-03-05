@@ -1,7 +1,7 @@
 import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import { forbiddenWordsMiddleware } from "../middleware";
 import createSagaMiddleware from "redux-saga";
-import apiSaga from "../sagas/api-saga";
+import rootSaga from "../sagas";
 import { composeWithDevTools } from "redux-devtools-extension";
 
 import { chatReducer } from "./chat/reducers";
@@ -24,6 +24,6 @@ export default function configurationStore() {
     composeWithDevTools(middleWareEnhancer)
   );
 
-  initialSagaMiddleware.run(apiSaga);
+  initialSagaMiddleware.run(rootSaga);
   return store;
 }

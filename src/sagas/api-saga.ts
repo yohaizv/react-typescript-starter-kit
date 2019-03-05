@@ -2,11 +2,11 @@ import { takeEvery, call, put } from "redux-saga/effects";
 import { SEND_ASYNC_MESSAGE, ChatActionTypes } from "../store/chat/types";
 import { sendMessage } from "../store/chat/actions";
 
-export default function* watcherSage() {
-  yield takeEvery(SEND_ASYNC_MESSAGE, workerSaga);
+export default function* watchSendAsyncMessage() {
+  yield takeEvery(SEND_ASYNC_MESSAGE, sendAsyncMessage);
 }
 
-function* workerSaga(action: ChatActionTypes) {
+function* sendAsyncMessage(action: ChatActionTypes) {
   try {
     if (action.type === SEND_ASYNC_MESSAGE) {
       const user = yield exampleAPI();
