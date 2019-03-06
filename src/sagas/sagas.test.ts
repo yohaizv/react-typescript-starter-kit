@@ -1,25 +1,41 @@
 import { put, call } from "redux-saga/effects";
-import { sendAsyncMessage, exampleAPI } from "./sagas";
-import { SEND_ASYNC_MESSAGE } from "../store/chat/types";
+import { sendAsyncMessage } from "./sagas";
+import { SEND_ASYNC_MESSAGE, ChatActionTypes } from "../store/chat/types";
 import { sendMessage } from "../store/chat/actions";
+import { recordSaga } from "../utils/testUtils";
+import * as api from "../services/api";
 
-describe("sendAsyncMessage Sage: ", () => {
-  const asyncMessage = "test async message";
-  const gen = sendAsyncMessage({
-    type: SEND_ASYNC_MESSAGE,
-    payload: asyncMessage
+jest.mock("../services/api", () => ({
+  getBotUserName: jest.fn().mockImplementation(() => "Test Bot user name")
+}));
+
+let originalDateNow: () => number;
+const mockDateNow = () => 1462361249717;
+
+describe("sendAsyncMessage Saga: ", () => {
+  beforeEach(function() {
+    originalDateNow = Date.now;
+    Date.now = mockDateNow;
   });
-  it("Call exampleAPI", () => {
-    const { value } = gen.next();
-    expect(value).toEqual(call(exampleAPI));
+
+  afterEach(function() {
+    Date.now = originalDateNow;
   });
-  it("Dispatch sendMessage", () => {
-    // const response = gen.next().value;
-    // const timestampVal = gen.next().value;
-    // expect(response).toEqual(put(sendMessage({
-    //     message:asyncMessage,
-    //     timestamp:timestampVal,
-    //     user:"Async Chat Bot"
-    // }))
+
+  it("Get user from API and call sendMessage", async () => {
+    const action: ChatActionTypes = {
+      type: SEND_ASYNC_MESSAGE,
+      payload: "test async message"
+    };
+    const dispatched = await recordSaga(sendAsyncMessage, action);
+
+    expect(api.getBotUserName).toHaveBeenCalledTimes(1);
+    expect(dispatched).toContainEqual(
+      sendMessage({
+        message: action.payload,
+        timestamp: mockDateNow(),
+        user: "Test Bot user name"
+      })
+    );
   });
 });
